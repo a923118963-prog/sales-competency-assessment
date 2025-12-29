@@ -557,15 +557,26 @@
             // 生成选项
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.innerHTML = `
-                <div class="option ${answers[question.id] === 'a' ? 'selected' : ''}" onclick="selectOption('a')">
+                <div class="option ${answers[question.id] === 'a' ? 'selected' : ''}" data-option="a">
                     <div class="option-label">选项 A</div>
                     <div class="option-text">${question.option_a}</div>
                 </div>
-                <div class="option ${answers[question.id] === 'b' ? 'selected' : ''}" onclick="selectOption('b')">
+                <div class="option ${answers[question.id] === 'b' ? 'selected' : ''}" data-option="b">
                     <div class="option-label">选项 B</div>
                     <div class="option-text">${question.option_b}</div>
                 </div>
             `;
+            
+            // 添加事件监听器
+            const handleOptionClick = (e) => {
+                const option = e.currentTarget.dataset.option;
+                selectOption(option, e);
+            };
+            
+            const optionElements = optionsContainer.querySelectorAll('.option');
+            optionElements.forEach(option => {
+                option.addEventListener('click', handleOptionClick);
+            });
             
             // 更新导航按钮
             updateNavigationButtons();
@@ -575,7 +586,7 @@
         }
 
         // 选择选项
-        function selectOption(option) {
+        function selectOption(option, event) {
             const question = questions[currentQuestionIndex];
             answers[question.id] = option;
             
