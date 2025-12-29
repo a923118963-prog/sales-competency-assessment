@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>销售岗位胜任力评估 - 情境判断</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10/dist/framer-motion.js"></script>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CSS Variables from globals.css */
+        :root {
+          /* Updated color palette to match high-contrast, minimalist design with a focus on red accents */
+          --background: oklch(0.98 0 0); /* Off-white / Cream */
+          --foreground: oklch(0.1 0 0);
+          --card: oklch(1 0 0);
+          --card-foreground: oklch(0.1 0 0);
+          --popover: oklch(1 0 0);
+          --popover-foreground: oklch(0.1 0 0);
+          --primary: oklch(0.1 0 0); /* Black */
+          --primary-foreground: oklch(1 0 0);
+          --secondary: oklch(0.9 0.05 20); /* Subtle warm accent */
+          --secondary-foreground: oklch(0.1 0 0);
+          --muted: oklch(0.95 0 0);
+          --muted-foreground: oklch(0.4 0 0);
+          --accent: oklch(0.6 0.25 20); /* Vibrant Red */
+          --accent-foreground: oklch(1 0 0);
+          --destructive: oklch(0.6 0.25 20);
+          --destructive-foreground: oklch(1 0 0);
+          --border: oklch(0.1 0 0);
+          --input: oklch(0.9 0 0);
+          --ring: oklch(0.1 0 0);
+          --radius: 0rem; /* Strict minimalist, no rounding */
+        }
+
+        .dark {
+          --background: oklch(0.145 0 0);
+          --foreground: oklch(0.985 0 0);
+          --card: oklch(0.145 0 0);
+          --card-foreground: oklch(0.985 0 0);
+          --popover: oklch(0.145 0 0);
+          --popover-foreground: oklch(0.985 0 0);
+          --primary: oklch(0.985 0 0);
+          --primary-foreground: oklch(0.205 0 0);
+          --secondary: oklch(0.269 0 0);
+          --secondary-foreground: oklch(0.985 0 0);
+          --muted: oklch(0.269 0 0);
+          --muted-foreground: oklch(0.708 0 0);
+          --accent: oklch(0.269 0 0);
+          --accent-foreground: oklch(0.985 0 0);
+          --destructive: oklch(0.396 0.141 25.723);
+          --destructive-foreground: oklch(0.637 0.237 25.331);
+          --border: oklch(0.269 0 0);
+          --input: oklch(0.269 0 0);
+          --ring: oklch(0.439 0 0);
+        }
+
+        /* Base Styles */
+        * {
+          border-color: var(--border);
+        }
+        
+        body {
+          background-color: var(--background);
+          color: var(--foreground);
+          overflow: hidden;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        /* Tailwind CSS 类名样式 */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .h-screen { height: 100vh; }
+        .w-full { width: 100%; }
+        .bg-background { background-color: var(--background); }
+        .bg-muted { background-color: var(--muted); }
+        .bg-primary { background-color: var(--primary); }
+        .bg-card { background-color: var(--card); }
+        .bg-accent { background-color: var(--accent); }
+        .bg-foreground { background-color: var(--foreground); }
+        .text-background { color: var(--background); }
+        .text-muted-foreground { color: var(--muted-foreground); }
+        .text-primary { color: var(--primary); }
+        .text-accent { color: var(--accent); }
+        .text-foreground { color: var(--foreground); }
+        .font-mono { font-family: monospace; }
+        .uppercase { text-transform: uppercase; }
+        .tracking-tighter { letter-spacing: -0.05em; }
+        .tracking-widest { letter-spacing: 0.1em; }
+        .p-6 { padding: 1.5rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .border-b { border-bottom: 1px solid; }
+        .pb-2 { padding-bottom: 0.5rem; }
+        .shrink-0 { flex-shrink: 0; }
+        .h-3 { height: 0.75rem; }
+        .overflow-hidden { overflow: hidden; }
+        .text-xl { font-size: 1.25rem; }
+        .font-bold { font-weight: 700; }
+        .text-sm { font-size: 0.875rem; }
+        .items-baseline { align-items: baseline; }
+        .flex-1 { flex: 1; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .min-h-0 { min-height: 0; }
+        .border-2 { border-width: 2px; }
+.shadow-\[8px_8px_0px_0px_rgba\(0\,0\,0\,1\)\] { box-shadow: 8px 8px 0px 0px rgba(0,0,0,1); }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .text-xs { font-size: 0.75rem; }
+        .tracking-\[0\.2em\] { letter-spacing: 0.2em; }
+        .text-2xl { font-size: 1.5rem; }
+        .md\:text-3xl { font-size: 1.875rem; }
+        .leading-tight { line-height: 1.25; }
+        .font-black { font-weight: 900; }
+        .text-\[10vw\] { font-size: 10vw; }
+        .opacity-5 { opacity: 0.05; }
+        .leading-none { line-height: 1; }
+        .absolute { position: absolute; }
+        .bottom-0 { bottom: 0; }
+        .right-0 { right: 0; }
+        .pointer-events-none { pointer-events: none; }
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .gap-4 { gap: 1rem; }
+        .h-24 { height: 6rem; }
+        .overflow-hidden { overflow: hidden; }
+        .active\:translate-y-1:active { transform: translateY(0.25rem); }
+        .active\:shadow-none:active { box-shadow: none; }
+        .transition-all { transition-property: all; }
+        .disabled\:opacity-50:disabled { opacity: 0.5; }
+        .disabled\:bg-muted:disabled { background-color: var(--muted); }
+        .disabled\:text-muted-foreground:disabled { color: var(--muted-foreground); }
+        .relative { position: relative; }
+        .z-10 { z-index: 10; }
+        .inset-0 { inset: 0; }
+        .translate-y-full { transform: translateY(100%); }
+        .group-active\:translate-y-0:active { transform: translateY(0); }
+        .transition-transform { transition-property: transform; }
+        .duration-100 { transition-duration: 100ms; }
+        .hover\:bg-primary:hover { background-color: var(--primary); }
+        .hover\:text-background:hover { color: var(--background); }
+        .disabled\:border-muted:disabled { border-color: var(--muted); }
+        .text-center { text-align: center; }
+        .text-6xl { font-size: 3.75rem; }
+        .italic { font-style: italic; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; }
+        .font-medium { font-weight: 500; }
+        .text-\[10px\] { font-size: 10px; }
+        
+        /* 自定义样式 */
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        code {
+            font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+                monospace;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        // 导入 React 和 Framer Motion
+        const { useState, useEffect } = React;
+        const { motion, AnimatePresence } = FramerMotion;
+
+        // 题目数据
+        const questions = [ 
+            { 
+                "id": 1, 
+                "scenario": "季末最后一天，你距离完成业绩目标只差一单。客户口头承诺签约，但要求在合同中增加一个尚未经过公司法务审批的非标准条款。法务审批流程至少需要3天。", 
+                "option_a": "先签下来再说。业绩达成是第一位的，条款问题后续再想办法通过补充协议或沟通解决。", 
+                "option_b": "坚持走完流程。虽然可能导致业绩未达标，但不能给公司埋下合规隐患。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 2, 
+                "scenario": "你正在跟进一个大客户，竞争对手突然报出了一个极低的价格。你知道这个价格低于成本，对手可能是为了恶意抢占市场。客户动摇了，问你能否跟进。", 
+                "option_a": "承诺可以跟进。先拿下单子把竞争对手挤走，利润问题通过后期的增值服务或二期项目找补。", 
+                "option_b": "坦诚告知无法跟进。向客户详细拆解成本结构，强调低价带来的交付风险，即使丢单也不做亏本生意。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 3, 
+                "scenario": "客户的技术负责人是个非常挑剔的人，他在POC（概念验证）阶段提出了很多超出原本需求范围的琐碎修改意见，严重拖慢了项目进度，可能导致签单延迟。", 
+                "option_a": "绕过他。直接找拥有决策权的CEO或采购总监推进商务谈判，技术细节留到实施阶段再扯皮。", 
+                "option_b": "耐心配合。虽然进度慢，但满足关键使用者的所有细节要求能建立更长久的信任，利于后续口碑。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 4, 
+                "scenario": "公司发布了一款新产品，但实际上功能还不太稳定。你有一个非常信任你的老客户正好有这个需求，你是第一个联系他的人。", 
+                "option_a": "大力推销。抓住先机占领预算，利用这层关系先卖进去，再倒逼产研团队快速迭代修复bug。", 
+                "option_b": "建议观望。私下告诉客户产品还需打磨，建议他等下个版本稳定后再采购，保护客户体验。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 5, 
+                "scenario": "你需要调动公司内部的售前专家支持你的项目，但专家资源紧张。你发现同事的一个小项目占用了专家时间，而你的项目金额是他的十倍。", 
+                "option_a": "强势抢夺资源。直接找领导协调或向专家施压，大项目优先是公司的生存法则，同事的感受可以暂时忽略。", 
+                "option_b": "排队或协商。尊重同事的先来后到，尝试自己先顶上，或者寻找其他替代方案，维护内部协作氛围。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            } 
+        ];
+
+        function ScenarioPage() { 
+            const [timeLeft, setTimeLeft] = useState(15); 
+            const [isGameOver, setIsGameOver] = useState(false); 
+            const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [assessmentComplete, setAssessmentComplete] = useState(false);
+
+            const currentQuestion = questions[currentQuestionIndex];
+
+            useEffect(() => { 
+                if (timeLeft > 0 && !isGameOver && !assessmentComplete) { 
+                    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000); 
+                    return () => clearInterval(timer); 
+                } else if (timeLeft === 0) { 
+                    setIsGameOver(true); 
+                } 
+            }, [timeLeft, isGameOver, assessmentComplete]); 
+
+            const progress = (timeLeft / 15) * 100; 
+            const barColor = `rgb(${Math.floor(0 + (255 - 0) * (timeLeft / 15))}, ${Math.floor(120 + (255 - 120) * (timeLeft / 15))}, ${Math.floor(255 * (timeLeft / 15))})`;
+
+            const handleSelectOption = (option) => {
+                const newAnswers = {
+                    ...answers,
+                    [currentQuestion.id]: option
+                };
+                setAnswers(newAnswers);
+
+                // 检查是否所有题目都已完成
+                if (currentQuestionIndex < questions.length - 1) {
+                    // 跳转到下一题
+                    setTimeout(() => {
+                        setCurrentQuestionIndex(prev => prev + 1);
+                        setTimeLeft(15);
+                        setIsGameOver(false);
+                    }, 1000);
+                } else {
+                    // 评估完成
+                    setAssessmentComplete(true);
+                    console.log("评估完成，答案:", newAnswers);
+                }
+            };
+
+            const resetGame = () => {
+                setCurrentQuestionIndex(0);
+                setTimeLeft(15);
+                setIsGameOver(false);
+                setAnswers({});
+                setAssessmentComplete(false);
+            };
+
+            return ( 
+                <main className="relative flex flex-col h-screen w-full bg-background p-6 font-mono uppercase tracking-tighter overflow-hidden"> 
+                    {/* Top Countdown Bar */} 
+                    <div className="w-full h-3 bg-muted overflow-hidden shrink-0"> 
+                        <motion.div 
+                            className="h-full" 
+                            initial={{ width: "100%" }} 
+                            animate={{ width: `${progress}%`, backgroundColor: barColor }} 
+                            transition={{ duration: 1, ease: "linear" }} 
+                        /> 
+                    </div> 
+
+                    {/* Header Info */} 
+                    <div className="flex justify-between items-baseline mt-2 border-b pb-2 shrink-0"> 
+                        <h1 className="text-xl font-bold tracking-widest text-accent">情境.{currentQuestion.id.toString().padStart(2, "0")}</h1> 
+                        <div className="text-sm">{timeLeft.toString().padStart(2, "0")}:00</div> 
+                    </div> 
+
+                    {/* Central Scenario Card */} 
+                    <div className="flex-1 flex items-center justify-center py-4 min-h-0 overflow-hidden"> 
+                        <AnimatePresence mode="wait"> 
+                            {!isGameOver && !assessmentComplete ? ( 
+                                <motion.div 
+                                    key={currentQuestion.id} 
+                                    initial={{ opacity: 0, y: 20 }} 
+                                    animate={{ opacity: 1, y: 0 }} 
+                                    exit={{ opacity: 0, scale: 0.9 }} 
+                                    className="relative w-full h-full border-2 border-primary bg-card p-6 flex flex-col justify-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" 
+                                > 
+                                    <div className="space-y-4"> 
+                                        <div className="text-xs text-muted-foreground tracking-[0.2em]">当前情境</div> 
+                                        <p className="text-2xl md:text-3xl leading-tight font-black"> 
+                                            {currentQuestion.scenario} 
+                                        </p> 
+                                    </div> 
+                                    <div className="text-[10vw] font-black opacity-5 leading-none absolute bottom-0 right-0 pointer-events-none"> 
+                                        ? 
+                                    </div> 
+                                </motion.div> 
+                            ) : isGameOver && !assessmentComplete ? ( 
+                                <motion.div 
+                                    key="gameover" 
+                                    initial={{ opacity: 0, scale: 1.1 }} 
+                                    animate={{ opacity: 1, scale: 1 }} 
+                                    className="text-center space-y-4" 
+                                > 
+                                    <h2 className="text-6xl font-black text-accent italic leading-none">时间已耗尽</h2> 
+                                    <button 
+                                        onClick={resetGame} 
+                                        className="px-6 py-2 border-2 border-primary hover:bg-primary hover:text-background transition-colors" 
+                                    > 
+                                        重置周期 
+                                    </button> 
+                                </motion.div> 
+                            ) : ( 
+                                <motion.div 
+                                    key="completed" 
+                                    initial={{ opacity: 0, scale: 1.1 }} 
+                                    animate={{ opacity: 1, scale: 1 }} 
+                                    className="text-center space-y-4" 
+                                > 
+                                    <h2 className="text-6xl font-black text-accent italic leading-none">评估完成</h2> 
+                                    <p className="text-xl text-gray-600">您已完成所有情境判断题目</p> 
+                                    <p className="text-lg text-gray-500">共完成 {Object.keys(answers).length} 道题目</p> 
+                                    <button 
+                                        onClick={resetGame} 
+                                        className="px-6 py-2 border-2 border-primary hover:bg-primary hover:text-background transition-colors" 
+                                    > 
+                                        重新评估 
+                                    </button> 
+                                </motion.div> 
+                            )} 
+                        </AnimatePresence> 
+                    </div> 
+
+                    {/* Decision Buttons */} 
+                    {!assessmentComplete && (
+                        <div className="grid grid-cols-2 gap-4 mb-4 shrink-0"> 
+                            <button 
+                                disabled={isGameOver} 
+                                onClick={() => handleSelectOption('a')} 
+                                className="group relative h-24 border-2 border-primary bg-primary text-background overflow-hidden active:translate-y-1 active:shadow-none transition-all disabled:opacity-50 disabled:bg-muted disabled:text-muted-foreground" 
+                            > 
+                                <span className="relative z-10 font-bold text-lg">{currentQuestion.option_a.substring(0, 15)}...</span> 
+                                {!isGameOver && ( 
+                                    <div className="absolute inset-0 bg-accent translate-y-full group-active:translate-y-0 transition-transform duration-100" /> 
+                                )} 
+                            </button> 
+                            <button 
+                                disabled={isGameOver} 
+                                onClick={() => handleSelectOption('b')} 
+                                className="group relative h-24 border-2 border-primary hover:bg-primary hover:text-background active:translate-y-1 transition-all disabled:opacity-50 disabled:border-muted disabled:text-muted-foreground" 
+                            > 
+                                <span className="font-bold text-lg">{currentQuestion.option_b.substring(0, 15)}...</span> 
+                            </button> 
+                        </div> 
+                    )} 
+
+                    {/* Footer Decoration */} 
+                    <div className="text-[10px] text-muted-foreground flex justify-between"> 
+                        <span>v0.系统.日志_初始化</span> 
+                        <span>进度: {currentQuestionIndex + 1}/{questions.length}</span> 
+                    </div> 
+                </main> 
+            );
+        } 
+
+        // 渲染组件
+        ReactDOM.render(
+            <React.StrictMode>
+                <ScenarioPage />
+            </React.StrictMode>,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>

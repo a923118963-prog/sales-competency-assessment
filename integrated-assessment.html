@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>销售岗位胜任力评估 - 整合版</title>
+    <style>
+        /* CSS Variables from globals.css */
+        :root {
+          /* Updated color palette to match high-contrast, minimalist design with a focus on red accents */
+          --background: oklch(0.98 0 0); /* Off-white / Cream */
+          --foreground: oklch(0.1 0 0);
+          --card: oklch(1 0 0);
+          --card-foreground: oklch(0.1 0 0);
+          --popover: oklch(1 0 0);
+          --popover-foreground: oklch(0.1 0 0);
+          --primary: oklch(0.1 0 0); /* Black */
+          --primary-foreground: oklch(1 0 0);
+          --secondary: oklch(0.9 0.05 20); /* Subtle warm accent */
+          --secondary-foreground: oklch(0.1 0 0);
+          --muted: oklch(0.95 0 0);
+          --muted-foreground: oklch(0.4 0 0);
+          --accent: oklch(0.6 0.25 20); /* Vibrant Red */
+          --accent-foreground: oklch(1 0 0);
+          --destructive: oklch(0.6 0.25 20);
+          --destructive-foreground: oklch(1 0 0);
+          --border: oklch(0.1 0 0);
+          --input: oklch(0.9 0 0);
+          --ring: oklch(0.1 0 0);
+          --radius: 0rem; /* Strict minimalist, no rounding */
+        }
+
+        .dark {
+          --background: oklch(0.145 0 0);
+          --foreground: oklch(0.985 0 0);
+          --card: oklch(0.145 0 0);
+          --card-foreground: oklch(0.985 0 0);
+          --popover: oklch(0.145 0 0);
+          --popover-foreground: oklch(0.985 0 0);
+          --primary: oklch(0.985 0 0);
+          --primary-foreground: oklch(0.205 0 0);
+          --secondary: oklch(0.269 0 0);
+          --secondary-foreground: oklch(0.985 0 0);
+          --muted: oklch(0.269 0 0);
+          --muted-foreground: oklch(0.708 0 0);
+          --accent: oklch(0.269 0 0);
+          --accent-foreground: oklch(0.985 0 0);
+          --destructive: oklch(0.396 0.141 25.723);
+          --destructive-foreground: oklch(0.637 0.237 25.331);
+          --border: oklch(0.269 0 0);
+          --input: oklch(0.269 0 0);
+          --ring: oklch(0.439 0 0);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border-color: var(--border);
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .container {
+            background: var(--card);
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* Top Countdown Bar */
+        .countdown-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--muted);
+            overflow: hidden;
+        }
+
+        .countdown-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 1s linear;
+        }
+
+        /* Header Info */
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .scenario-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .time-display {
+            font-size: 14px;
+            color: var(--muted-foreground);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 32px;
+        }
+
+        /* Intro Section */
+        .intro-section {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .intro-section h1 {
+            font-size: 32px;
+            color: var(--foreground);
+            margin-bottom: 24px;
+        }
+
+        .intro-section p {
+            font-size: 16px;
+            color: var(--muted-foreground);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .intro-list {
+            text-align: left;
+            margin: 32px auto;
+            max-width: 500px;
+        }
+
+        .intro-list li {
+            margin-bottom: 16px;
+            color: var(--foreground);
+            display: flex;
+            align-items: center;
+        }
+
+        .intro-list li::before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        /* Scenario Section */
+        .scenario-section {
+            display: none;
+        }
+
+        .scenario-content {
+            margin-bottom: 32px;
+        }
+
+        .scenario-text {
+            background: var(--muted);
+            padding: 24px;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .option {
+            padding: 20px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card);
+        }
+
+        .option:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: var(--secondary);
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .option-text {
+            color: var(--foreground);
+            line-height: 1.5;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+            text-align: center;
+        }
+
+        .results-section h2 {
+            font-size: 28px;
+            color: var(--foreground);
+            margin-bottom: 32px;
+        }
+
+        .scores-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 32px 0;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .score-card {
+            background: var(--muted);
+            padding: 24px;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-card h3 {
+            font-size: 18px;
+            color: var(--foreground);
+            margin-bottom: 12px;
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .score-description {
+            font-size: 14px;
+            color: var(--muted-foreground);
+        }
+
+        .results-text {
+            margin: 32px 0;
+            padding: 24px;
+            background: var(--secondary);
+            border-left: 4px solid var(--accent);
+            text-align: left;
+        }
+
+        .results-text h3 {
+            font-size: 20px;
+            color: var(--foreground);
+            margin-bottom: 16px;
+        }
+
+        .results-text p {
+            font-size: 16px;
+            color: var(--foreground);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border: 2px solid var(--border);
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--muted);
+            color: var(--muted-foreground);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Navigation */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Dimension Colors */
+        .dimension-a {
+            color: var(--accent);
+        }
+
+        .dimension-b {
+            color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .header-info {
+                padding: 12px 20px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn {
+                width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Countdown Bar -->
+        <div class="countdown-bar">
+            <div class="countdown-fill" id="countdownFill"></div>
+        </div>
+
+        <!-- Header Info -->
+        <div class="header-info">
+            <div class="scenario-title" id="scenarioTitle">销售岗位胜任力评估</div>
+            <div class="time-display" id="timeDisplay">00:00</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Intro Section -->
+            <div class="intro-section" id="introSection">
+                <h1>销售岗位胜任力评估</h1>
+                <p>该评估工具旨在通过一系列情境判断题目，评估候选人在销售岗位上的胜任力特征，帮助企业识别最适合的销售人才。</p>
+                
+                <div class="intro-list">
+                    <li>共10道情境判断题目</li>
+                    <li>每道题有15秒的思考时间</li>
+                    <li>时间结束后自动跳转到下一题</li>
+                    <li>每道题有两个选项，没有对错之分</li>
+                    <li>评估将从两个维度分析您的销售胜任力</li>
+                    <li>完成评估后，您将获得详细的结果报告</li>
+                </div>
+
+                <button class="btn" onclick="startAssessment()">开始评估</button>
+            </div>
+
+            <!-- Scenario Section -->
+            <div class="scenario-section" id="scenarioSection">
+                <div class="scenario-content">
+                    <div class="scenario-text" id="scenarioText"></div>
+                    
+                    <div class="options-container" id="optionsContainer">
+                        <!-- Options will be generated dynamically -->
+                    </div>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" onclick="prevQuestion()" id="prevBtn" disabled>上一题</button>
+                    <button class="btn" onclick="nextQuestion()" id="nextBtn">下一题</button>
+                    <button class="btn" onclick="submitAssessment()" id="submitBtn" style="display: none;">提交评估</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection">
+                <h2>评估结果</h2>
+                
+                <div class="scores-container">
+                    <div class="score-card">
+                        <h3>维度A：<span class="dimension-a">销售进取心</span></h3>
+                        <div class="score-value" id="dimensionAScore">0</div>
+                        <div class="score-description" id="dimensionADescription"></div>
+                    </div>
+                    <div class="score-card">
+                        <h3>维度B：<span class="dimension-b">销售专业性</span></h3>
+                        <div class="score-value" id="dimensionBScore">0</div>
+                        <div class="score-description" id="dimensionBDescription"></div>
+                    </div>
+                </div>
+
+                <div class="results-text">
+                    <h3>评估分析</h3>
+                    <p id="resultsAnalysis"></p>
+                </div>
+
+                <button class="btn" onclick="restartAssessment()">重新评估</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 题目数据
+        const questions = [ 
+            { 
+                "id": 1, 
+                "scenario": "季末最后一天，你距离完成业绩目标只差一单。客户口头承诺签约，但要求在合同中增加一个尚未经过公司法务审批的非标准条款。法务审批流程至少需要3天。", 
+                "option_a": "先签下来再说。业绩达成是第一位的，条款问题后续再想办法通过补充协议或沟通解决。", 
+                "option_b": "坚持走完流程。虽然可能导致业绩未达标，但不能给公司埋下合规隐患。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 2, 
+                "scenario": "你正在跟进一个大客户，竞争对手突然报出了一个极低的价格。你知道这个价格低于成本，对手可能是为了恶意抢占市场。客户动摇了，问你能否跟进。", 
+                "option_a": "承诺可以跟进。先拿下单子把竞争对手挤走，利润问题通过后期的增值服务或二期项目找补。", 
+                "option_b": "坦诚告知无法跟进。向客户详细拆解成本结构，强调低价带来的交付风险，即使丢单也不做亏本生意。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 3, 
+                "scenario": "客户的技术负责人是个非常挑剔的人，他在POC（概念验证）阶段提出了很多超出原本需求范围的琐碎修改意见，严重拖慢了项目进度，可能导致签单延迟。", 
+                "option_a": "绕过他。直接找拥有决策权的CEO或采购总监推进商务谈判，技术细节留到实施阶段再扯皮。", 
+                "option_b": "耐心配合。虽然进度慢，但满足关键使用者的所有细节要求能建立更长久的信任，利于后续口碑。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 4, 
+                "scenario": "公司发布了一款新产品，但实际上功能还不太稳定。你有一个非常信任你的老客户正好有这个需求，你是第一个联系他的人。", 
+                "option_a": "大力推销。抓住先机占领预算，利用这层关系先卖进去，再倒逼产研团队快速迭代修复bug。", 
+                "option_b": "建议观望。私下告诉客户产品还需打磨，建议他等下个版本稳定后再采购，保护客户体验。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 5, 
+                "scenario": "你需要调动公司内部的售前专家支持你的项目，但专家资源紧张。你发现同事的一个小项目占用了专家时间，而你的项目金额是他的十倍。", 
+                "option_a": "强势抢夺资源。直接找领导协调或向专家施压，大项目优先是公司的生存法则，同事的感受可以暂时忽略。", 
+                "option_b": "排队或协商。尊重同事的先来后到，尝试自己先顶上，或者寻找其他替代方案，维护内部协作氛围。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 6, 
+                "scenario": "客户方的关键决策人暗示，如果能帮他安排一次高规格的私人旅游考察，这个单子就能立刻定下来。这在公司报销制度的灰色地带。", 
+                "option_a": "想办法操作。结果至上，通过拆分发票或申请特殊市场费用的方式满足客户，把单子拿回来。", 
+                "option_b": "礼貌拒绝。坚守底线，尝试通过提升方案价值或公司层面的正式互访来打动客户，不碰红线。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 7, 
+                "scenario": "你发现客户对自己真正的痛点并不清晰，他们想要购买的一套昂贵的高级版方案其实并不适合他们，反而是一套便宜的基础版更实用。", 
+                "option_a": "卖高级版。客户有预算且愿意买，销售的职责是最大化公司营收和自己的佣金，没必要替客户省钱。", 
+                "option_b": "推荐基础版。基于专业顾问的立场，坚持卖对的而不是卖贵的，哪怕这会让你的业绩减半。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 8, 
+                "scenario": "项目交付后出现了一些小问题，客户非常生气并在深夜打电话给你抱怨。此时你正忙于攻克另一个处于关键节点的千万级大单。", 
+                "option_a": "转交客服。安抚两句后，迅速把工单转给售后团队处理，自己的精力必须聚焦在能产生新收益的打单上。", 
+                "option_b": "亲自处理。暂停手头工作，哪怕通宵也要先解决老客户的情绪和问题，交付后的服务是销售承诺的一部分。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 9, 
+                "scenario": "为了赢单，你需要制定投标策略。你掌握了竞争对手产品的一个致命缺陷（虽然对方声称已解决）。", 
+                "option_a": "攻击痛点。在给客户的对比材料中重点放大这个缺陷，制造客户的恐惧心理，通过打压对手来上位。", 
+                "option_b": "专注自我。只强调我们方案的优势和价值，不主动评价友商，保持客观中立的专业形象。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            }, 
+            { 
+                "id": 10, 
+                "scenario": "你所在的区域市场已经饱和，想要完成高增长目标，唯一的办法是去抢占同事负责的客户（撞单），公司规则对此界定模糊。", 
+                "option_a": "主动出击。市场是打出来的不是分出来的，谁有能力搞定客户谁就上，适度的内部竞争能激活团队。", 
+                "option_b": "坚守边界。严格遵守领地划分，哪怕业绩增长缓慢，也不去触碰同事的利益蛋糕，维持团队稳定。", 
+                "dimension_a_score": 1, 
+                "dimension_b_score": 1 
+            } 
+        ];
+
+        // 全局变量
+        let currentQuestionIndex = 0;
+        let timeLeft = 15;
+        let timer = null;
+        let answers = {};
+        let isAssessmentStarted = false;
+
+        // 初始化页面
+        function initPage() {
+            const countdownFill = document.getElementById('countdownFill');
+            countdownFill.style.width = '100%';
+        }
+
+        // 开始评估
+        function startAssessment() {
+            isAssessmentStarted = true;
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('scenarioSection').style.display = 'block';
+            
+            currentQuestionIndex = 0;
+            timeLeft = 15;
+            answers = {};
+            
+            showQuestion();
+            startTimer();
+        }
+
+        // 显示当前题目
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            
+            // 更新标题
+            document.getElementById('scenarioTitle').textContent = `情境.${(currentQuestionIndex + 1).toString().padStart(2, '0')}`;
+            
+            // 更新情境文本
+            document.getElementById('scenarioText').textContent = question.scenario;
+            
+            // 生成选项
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = `
+                <div class="option ${answers[question.id] === 'a' ? 'selected' : ''}" onclick="selectOption('a')">
+                    <div class="option-label">选项 A</div>
+                    <div class="option-text">${question.option_a}</div>
+                </div>
+                <div class="option ${answers[question.id] === 'b' ? 'selected' : ''}" onclick="selectOption('b')">
+                    <div class="option-label">选项 B</div>
+                    <div class="option-text">${question.option_b}</div>
+                </div>
+            `;
+            
+            // 更新导航按钮
+            updateNavigationButtons();
+            
+            // 重置计时器
+            resetTimer();
+        }
+
+        // 选择选项
+        function selectOption(option) {
+            const question = questions[currentQuestionIndex];
+            answers[question.id] = option;
+            
+            // 更新选项样式
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.target.closest('.option').classList.add('selected');
+        }
+
+        // 开始计时器
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                updateCountdownBar();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        // 重置计时器
+        function resetTimer() {
+            clearInterval(timer);
+            timeLeft = 15;
+            updateTimerDisplay();
+            updateCountdownBar();
+            startTimer();
+        }
+
+        // 更新计时器显示
+        function updateTimerDisplay() {
+            document.getElementById('timeDisplay').textContent = `${timeLeft.toString().padStart(2, '0')}:00`;
+        }
+
+        // 更新倒计时条
+        function updateCountdownBar() {
+            const progress = (timeLeft / 15) * 100;
+            document.getElementById('countdownFill').style.width = `${progress}%`;
+        }
+
+        // 更新导航按钮
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        // 上一题
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            }
+        }
+
+        // 提交评估
+        function submitAssessment() {
+            clearInterval(timer);
+            calculateResults();
+        }
+
+        // 计算结果
+        function calculateResults() {
+            let dimensionAScore = 0;
+            let dimensionBScore = 0;
+            
+            Object.entries(answers).forEach(([questionId, option]) => {
+                const question = questions.find(q => q.id === parseInt(questionId));
+                if (question) {
+                    if (option === 'a') {
+                        dimensionAScore += question.dimension_a_score;
+                    } else if (option === 'b') {
+                        dimensionBScore += question.dimension_b_score;
+                    }
+                }
+            });
+            
+            // 显示结果
+            showResults(dimensionAScore, dimensionBScore);
+        }
+
+        // 显示结果
+        function showResults(dimensionA, dimensionB) {
+            document.getElementById('scenarioSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // 更新分数
+            document.getElementById('dimensionAScore').textContent = dimensionA;
+            document.getElementById('dimensionBScore').textContent = dimensionB;
+            
+            // 更新分数描述
+            const dimensionADescription = getDimensionDescription(dimensionA);
+            const dimensionBDescription = getDimensionDescription(dimensionB);
+            
+            document.getElementById('dimensionADescription').textContent = dimensionADescription;
+            document.getElementById('dimensionBDescription').textContent = dimensionBDescription;
+            
+            // 生成结果分析
+            const analysis = generateAnalysis(dimensionA, dimensionB);
+            document.getElementById('resultsAnalysis').innerHTML = analysis;
+        }
+
+        // 获取维度描述
+        function getDimensionDescription(score) {
+            if (score >= 8) return '很强';
+            if (score >= 6) return '较强';
+            if (score >= 4) return '中等';
+            if (score >= 2) return '较弱';
+            return '很弱';
+        }
+
+        // 生成结果分析
+        function generateAnalysis(dimensionA, dimensionB) {
+            let analysis = '';
+            
+            // 维度A：销售进取心
+            if (dimensionA >= 7) {
+                analysis += '<p><strong class="dimension-a">销售进取心很强</strong>：您具有强烈的成就动机和竞争意识，能够积极主动地追求销售目标，面对挑战时展现出坚韧不拔的精神。</p>';
+            } else if (dimensionA >= 4) {
+                analysis += '<p><strong class="dimension-a">销售进取心中等</strong>：您在大多数情况下能够积极追求销售目标，但在面对困难或压力时可能会有所犹豫，需要适当调整心态。</p>';
+            } else {
+                analysis += '<p><strong class="dimension-a">销售进取心较弱</strong>：您可能更注重稳定性和舒适度，对高目标的追求动力不足，需要增强竞争意识和成就动机。</p>';
+            }
+            
+            // 维度B：销售专业性
+            if (dimensionB >= 7) {
+                analysis += '<p><strong class="dimension-b">销售专业性很强</strong>：您在销售过程中展现出高度的专业素养，注重客户需求分析，坚持诚信原则，能够建立长期稳定的客户关系。</p>';
+            } else if (dimensionB >= 4) {
+                analysis += '<p><strong class="dimension-b">销售专业性中等</strong>：您具备基本的销售专业知识和技能，但在某些复杂情境下可能需要进一步提升专业判断能力。</p>';
+            } else {
+                analysis += '<p><strong class="dimension-b">销售专业性较弱</strong>：您在销售过程中可能更注重短期利益，对客户需求的理解和专业服务能力有待提高。</p>';
+            }
+            
+            // 综合分析
+            if (dimensionA >= 7 && dimensionB >= 7) {
+                analysis += '<p><strong>综合评价：</strong>您是一位非常优秀的销售人才，既具备强烈的进取心，又保持了高度的专业性，能够在激烈的市场竞争中取得优异业绩，同时维护良好的客户关系和公司形象。</p>';
+            } else if (dimensionA >= 7 && dimensionB < 4) {
+                analysis += '<p><strong>综合评价：</strong>您具有很强的销售进取心，但在专业性方面需要加强。建议您在追求业绩的同时，更加注重客户需求和长期关系的建立，遵守职业道德和公司规范。</p>';
+            } else if (dimensionA < 4 && dimensionB >= 7) {
+                analysis += '<p><strong>综合评价：</strong>您具有很高的销售专业性，但进取心不足。建议您设定更高的销售目标，增强竞争意识和主动开拓精神，充分发挥您的专业优势。</p>';
+            } else {
+                analysis += '<p><strong>综合评价：</strong>您在销售岗位上还有较大的提升空间。建议您同时加强销售进取心和专业性的培养，设定明确的职业发展目标，不断学习和实践，提升自己的销售能力。</p>';
+            }
+            
+            return analysis;
+        }
+
+        // 重新评估
+        function restartAssessment() {
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('introSection').style.display = 'block';
+            isAssessmentStarted = false;
+        }
+
+        // 初始化
+        window.onload = initPage;
+    </script>
+</body>
+</html>
