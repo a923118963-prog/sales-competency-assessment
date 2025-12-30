@@ -1,0 +1,21 @@
+# Netlify Configuration File
+
+[build]
+  # 纯静态网站，不需要构建命令
+  command = ""
+  # 部署目录为根目录
+  publish = "."
+
+[headers]
+  # 为所有HTML文件添加缓存控制
+  for = "/*"
+    [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[redirects]
+  # 重定向配置（如果需要）
+  # 示例：将所有404重定向到index.html
+  # [[redirects]]
+  #   from = "/*"
+  #   to = "/index.html"
+  #   status = 200
