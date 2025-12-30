@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>销售岗位胜任力评估 - 现代版</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.16.4/framer-motion.min.js"></script>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 自定义属性 */
+        :root {
+            --background: #F2F4F3;
+            --accent: #FF4500;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --glass-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 基础样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* 玻璃态效果 */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* 主容器 */
+        main {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        /* 背景装饰 */
+        .background-decor {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0.4;
+        }
+
+        .background-decor .circle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 69, 0, 0.2);
+            filter: blur(3xl);
+        }
+
+        .background-decor .liquid-form {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            filter: blur(0.5rem);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* 倒计时部分 */
+        .timer-section {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 0.5rem;
+        }
+
+        .timer-label {
+            font-size: 0.625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            font-weight: 500;
+            opacity: 0.4;
+        }
+
+        .timer-value {
+            font-size: 1.25rem;
+            font-weight: 300;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 2px;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background-color: var(--accent);
+            border-radius: 9999px;
+        }
+
+        /* 内容区域 */
+        .content-section {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        /* 标签组件 */
+        .label {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(0.5rem);
+            -webkit-backdrop-filter: blur(0.5rem);
+            margin-bottom: 1rem;
+        }
+
+        /* 介绍部分 */
+        .intro-section {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .intro-section h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .intro-section p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .intro-list {
+            text-align: left;
+            margin: 2rem auto;
+            max-width: 500px;
+        }
+
+        .intro-list li {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .intro-list li::before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        /* 情境部分 */
+        .scenario-section {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        .scenario-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .scenario-card {
+            flex: 1;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scenario-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* 选项容器 */
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 按钮组件 */
+        .action-button {
+            position: relative;
+            height: 5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .action-button:active {
+            transform: scale(0.98);
+        }
+
+        .action-button:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        .action-button.black {
+            background-color: black;
+            color: white;
+        }
+
+        .action-button.black:hover {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-button.glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: black;
+            border: 1px solid var(--glass-border);
+        }
+
+        .action-button.glass:hover {
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-button .gradient-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top right, rgba(255, 255, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .action-button.black:hover .gradient-overlay {
+            opacity: 1;
+        }
+
+        .action-button .button-text {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 导航按钮 */
+        .navigation-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .nav-button {
+            flex: 1;
+            padding: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.02);
+        }
+
+        .nav-button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        /* 结果部分 */
+        .results-section {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .results-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .results-card h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: 300;
+            margin: 2rem 0;
+        }
+
+        /* 页脚 */
+        .footer {
+            position: relative;
+            z-index: 10;
+            padding-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0.3;
+            font-size: 0.5625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            font-weight: 500;
+        }
+
+        .footer-meta {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* 动画容器 */
+        .motion-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            main {
+                padding: 1rem;
+            }
+
+            .scenario-card {
+                padding: 1.5rem;
+            }
+
+            .scenario-text {
+                font-size: 1rem;
+            }
+
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <!-- 背景装饰 -->
+        <div class="background-decor">
+            <motion.div
+                class="circle"
+                style="top: -5rem; right: -5rem; width: 24rem; height: 24rem;"
+                animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            ></motion.div>
+            <div class="liquid-form" style="top: 25%; left: 25%; width: 60vw; height: 60vw;"></div>
+        </div>
+
+        <!-- 倒计时部分 -->
+        <div class="timer-section">
+            <div class="timer-header">
+                <span class="timer-label">System.Time_Remaining</span>
+                <span class="timer-value" id="timerValue">15s</span>
+            </div>
+            <div class="timer-bar">
+                <motion.div
+                    class="timer-fill"
+                    id="timerFill"
+                    initial={{ width: "100%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 0, ease: "linear" }}
+                ></motion.div>
+            </div>
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="content-section">
+            <!-- 介绍部分 -->
+            <div id="introSection" class="intro-section">
+                <h1>销售岗位胜任力评估</h1>
+                <p>欢迎参加销售岗位胜任力评估。本评估将测试您在各种销售情境下的决策能力和销售技巧。</p>
+                <ul class="intro-list">
+                    <li>共10道情境题</li>
+                    <li>每道题15秒思考时间</li>
+                    <li>选择最适合的选项</li>
+                    <li>评估完成后将显示结果</li>
+                </ul>
+                <button class="action-button black" onclick="startAssessment()">
+                    <div class="gradient-overlay"></div>
+                    <span class="button-text">开始评估</span>
+                </button>
+            </div>
+
+            <!-- 情境部分 -->
+            <div id="scenarioSection" class="scenario-section">
+                <div class="scenario-content">
+                    <!-- 动态内容区域 -->
+                    <motion.div
+                        id="scenarioMotion"
+                        class="motion-container"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <span class="label" id="scenarioLabel">情境.01</span>
+                        <div class="scenario-card">
+                            <div class="scenario-text" id="scenarioText"></div>
+                        </div>
+
+                        <!-- 选项容器 -->
+                        <div class="options-container" id="optionsContainer"></div>
+
+                        <!-- 导航按钮 -->
+                        <div class="navigation-buttons">
+                            <button class="nav-button" id="prevBtn" onclick="prevQuestion()">上一题</button>
+                            <button class="nav-button" id="nextBtn" onclick="nextQuestion()">下一题</button>
+                            <button class="nav-button" id="submitBtn" onclick="submitAssessment()" style="display: none;">提交评估</button>
+                        </div>
+                    </motion.div>
+                </div>
+            </div>
+
+            <!-- 结果部分 -->
+            <div id="resultsSection" class="results-section">
+                <div class="results-card">
+                    <h2>评估结果</h2>
+                    <div>维度 A 分数：<span id="dimensionAScore">0</span></div>
+                    <div>维度 B 分数：<span id="dimensionBScore">0</span></div>
+                    <div class="score-display">总分：<span id="totalScore">0</span></div>
+                    <button class="action-button black" onclick="restartAssessment()">
+                        <div class="gradient-overlay"></div>
+                        <span class="button-text">重新评估</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <span>Sales.Competency.Assessment</span>
+            <div class="footer-meta">
+                <span>LAT: 35.6895</span>
+                <span>LNG: 139.6917</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 题目数据
+        const questions = [
+            {
+                "id": 1,
+                "scenario": "你正在向一个重要客户推销产品，客户对你的产品表现出浓厚兴趣，但突然接到一个紧急电话，需要处理公司内部事务。",
+                "option_a": "继续等待，直到客户处理完紧急事务，然后继续推销。",
+                "option_b": "主动提出改日再约，并留下相关资料，让客户有时间仔细考虑。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            },
+            {
+                "id": 2,
+                "scenario": "你已经与客户进行了多次沟通，客户对你的产品非常了解，但始终犹豫不决，担心产品的售后服务。",
+                "option_a": "强调公司的售后服务政策，提供详细的服务承诺和案例。",
+                "option_b": "提出提供试用服务，让客户亲身体验产品的质量和服务。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            },
+            {
+                "id": 3,
+                "scenario": "你正在参加一个行业展会，一位潜在客户对你的产品表现出兴趣，但同时也在与其他竞争对手交谈。",
+                "option_a": "主动上前介绍产品的独特优势，试图立即赢得客户的关注。",
+                "option_b": "先观察客户与竞争对手的交流，了解客户的需求，然后再针对性地介绍产品。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            },
+            {
+                "id": 4,
+                "scenario": "你的产品价格比竞争对手高，但质量更好。客户在比较后，对价格表示不满。",
+                "option_a": "解释产品的质量优势和长期价值，说明高价格的合理性。",
+                "option_b": "尝试提供一些优惠条件，如延长保修期或提供额外服务，以平衡价格差异。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            },
+            {
+                "id": 5,
+                "scenario": "你已经与客户达成了初步合作意向，但在签署合同前，客户突然提出了一些额外的要求，这些要求超出了你的权限范围。",
+                "option_a": "当场拒绝客户的额外要求，坚持按照原有合同条款执行。",
+                "option_b": "表示需要向上级汇报，争取在合理范围内满足客户的要求，同时保持合作关系。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            },
+            {
+                "id": 6,
+                "scenario": "你正在向一个新客户推销产品，客户对你的产品不熟悉，并且对新技术持怀疑态度。",
+                "option_a": "详细介绍产品的技术规格和性能参数，试图说服客户。",
+                "option_b": "通过简单的演示和实际案例，让客户直观地了解产品的价值和好处。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            },
+            {
+                "id": 7,
+                "scenario": "你已经与客户合作多年，关系良好。但最近，客户开始减少订单量，并表示正在考虑其他供应商。",
+                "option_a": "询问客户减少订单的原因，并承诺改进服务，以留住客户。",
+                "option_b": "提供一些特别优惠，如折扣或促销活动，试图恢复客户的订单量。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            },
+            {
+                "id": 8,
+                "scenario": "你正在向一个团队推销产品，团队成员意见不一致，有些人支持，有些人反对。",
+                "option_a": "针对反对意见进行辩论，试图说服所有团队成员。",
+                "option_b": "重点关注支持你的成员，通过他们来影响其他团队成员。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            },
+            {
+                "id": 9,
+                "scenario": "为了赢单，你需要制定投标策略。你掌握了竞争对手产品的一个致命缺陷（虽然对方声称已解决）。",
+                "option_a": "攻击痛点。在给客户的对比材料中重点放大这个缺陷，制造客户的恐惧心理，通过打压对手来上位。",
+                "option_b": "专注自我。只强调我们方案的优势和价值，不主动评价友商，保持客观中立的专业形象。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            },
+            {
+                "id": 10,
+                "scenario": "你所在的区域市场已经饱和，想要完成高增长目标，唯一的办法是去抢占同事负责的客户（撞单），公司规则对此界定模糊。",
+                "option_a": "主动出击。市场是打出来的不是分出来的，谁有能力搞定客户谁就上，适度的内部竞争能激活团队。",
+                "option_b": "坚守边界。严格遵守领地划分，哪怕业绩增长缓慢，也不去触碰同事的利益蛋糕，维持团队稳定。",
+                "dimension_a_score": 1,
+                "dimension_b_score": 1
+            }
+        ];
+
+        // 全局变量
+        let currentQuestionIndex = 0;
+        let timeLeft = 15;
+        let timer = null;
+        let answers = {};
+        let isAssessmentStarted = false;
+        let timerFill = document.getElementById('timerFill');
+        let timerValue = document.getElementById('timerValue');
+
+        // 初始化页面
+        function initPage() {
+            timerFill.style.width = '100%';
+        }
+
+        // 开始评估
+        function startAssessment() {
+            isAssessmentStarted = true;
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('scenarioSection').style.display = 'flex';
+            
+            currentQuestionIndex = 0;
+            timeLeft = 15;
+            answers = {};
+            
+            showQuestion();
+            startTimer();
+        }
+
+        // 显示当前题目
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            
+            // 更新标题
+            document.getElementById('scenarioLabel').textContent = `情境.${(currentQuestionIndex + 1).toString().padStart(2, '0')}`;
+            
+            // 更新情境文本
+            document.getElementById('scenarioText').textContent = question.scenario;
+            
+            // 生成选项
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = `
+                <button 
+                    class="action-button ${answers[question.id] === 'a' ? 'black' : 'glass'}"
+                    data-option="a"
+                    onclick="selectOption('a')"
+                >
+                    ${answers[question.id] === 'a' ? '<div class="gradient-overlay"></div>' : ''}
+                    <span class="button-text">${question.option_a}</span>
+                </button>
+                <button 
+                    class="action-button ${answers[question.id] === 'b' ? 'black' : 'glass'}"
+                    data-option="b"
+                    onclick="selectOption('b')"
+                >
+                    ${answers[question.id] === 'b' ? '<div class="gradient-overlay"></div>' : ''}
+                    <span class="button-text">${question.option_b}</span>
+                </button>
+            `;
+            
+            // 更新导航按钮
+            updateNavigationButtons();
+            
+            // 重置计时器
+            resetTimer();
+        }
+
+        // 选择选项
+        function selectOption(option) {
+            const question = questions[currentQuestionIndex];
+            answers[question.id] = option;
+            
+            // 更新选项样式
+            const buttons = document.querySelectorAll('.action-button');
+            buttons.forEach((btn, index) => {
+                const opt = index === 0 ? 'a' : 'b';
+                if (opt === option) {
+                    btn.className = 'action-button black';
+                    btn.innerHTML = '<div class="gradient-overlay"></div><span class="button-text">' + (opt === 'a' ? question.option_a : question.option_b) + '</span>';
+                } else {
+                    btn.className = 'action-button glass';
+                    btn.innerHTML = '<span class="button-text">' + (opt === 'a' ? question.option_a : question.option_b) + '</span>';
+                }
+                btn.onclick = () => selectOption(opt);
+            });
+        }
+
+        // 开始计时器
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        // 重置计时器
+        function resetTimer() {
+            clearInterval(timer);
+            timeLeft = 15;
+            updateTimer();
+            startTimer();
+        }
+
+        // 更新计时器
+        function updateTimer() {
+            timerValue.textContent = `${timeLeft}s`;
+            
+            // 更新倒计时条动画
+            const progress = (timeLeft / 15) * 100;
+            timerFill.animate(
+                { width: `${progress}%` },
+                { duration: 1, ease: "linear" }
+            );
+            timerFill.style.width = `${progress}%`;
+        }
+
+        // 更新导航按钮
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        // 上一题
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            }
+        }
+
+        // 提交评估
+        function submitAssessment() {
+            clearInterval(timer);
+            calculateResults();
+        }
+
+        // 计算结果
+        function calculateResults() {
+            let dimensionAScore = 0;
+            let dimensionBScore = 0;
+            
+            Object.entries(answers).forEach(([questionId, option]) => {
+                const question = questions.find(q => q.id === parseInt(questionId));
+                if (question) {
+                    if (option === 'a') {
+                        dimensionAScore += question.dimension_a_score;
+                    } else if (option === 'b') {
+                        dimensionBScore += question.dimension_b_score;
+                    }
+                }
+            });
+            
+            // 显示结果
+            showResults(dimensionAScore, dimensionBScore);
+        }
+
+        // 显示结果
+        function showResults(dimensionA, dimensionB) {
+            document.getElementById('scenarioSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'flex';
+            
+            // 更新分数
+            document.getElementById('dimensionAScore').textContent = dimensionA;
+            document.getElementById('dimensionBScore').textContent = dimensionB;
+            document.getElementById('totalScore').textContent = dimensionA + dimensionB;
+        }
+
+        // 重新评估
+        function restartAssessment() {
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('introSection').style.display = 'flex';
+            initPage();
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
