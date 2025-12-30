@@ -203,11 +203,9 @@
                         <!-- 选项容器 -->
                         <div class="grid grid-cols-2 gap-4 mb-8" id="optionsContainer"></div>
 
-                        <!-- 导航按钮 -->
-                        <div class="flex gap-4">
-                            <button class="flex-1 py-4 glass rounded-2xl text-sm font-medium tracking-widest uppercase hover:shadow-xl hover:scale-105 active:scale-95 transition-transform" id="prevBtn" onclick="prevQuestion()">上一题</button>
-                            <button class="flex-1 py-4 glass rounded-2xl text-sm font-medium tracking-widest uppercase hover:shadow-xl hover:scale-105 active:scale-95 transition-transform" id="nextBtn" onclick="nextQuestion()">下一题</button>
-                            <button class="flex-1 py-4 glass rounded-2xl text-sm font-medium tracking-widest uppercase hover:shadow-xl hover:scale-105 active:scale-95 transition-transform" id="submitBtn" onclick="submitAssessment()" style="display: none;">提交评估</button>
+                        <!-- 提交按钮（仅在最后一题显示） -->
+                        <div class="flex justify-center mt-8" id="submitButtonContainer" style="display: none;">
+                            <button class="py-4 px-8 glass rounded-2xl text-sm font-medium tracking-widest uppercase hover:shadow-xl hover:scale-105 active:scale-95 transition-transform" id="submitBtn" onclick="submitAssessment()">提交评估</button>
                         </div>
                     </motion.div>
                 </div>
@@ -410,6 +408,13 @@
                 }
                 btn.onclick = () => selectOption(opt);
             });
+            
+            // 如果不是最后一题，选择后自动进入下一题
+            if (currentQuestionIndex < questions.length - 1) {
+                setTimeout(() => {
+                    nextQuestion();
+                }, 500); // 延迟500ms，让用户看到选择效果
+            }
         }
 
         // 开始计时器
@@ -448,18 +453,15 @@
 
         // 更新导航按钮
         function updateNavigationButtons() {
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
             const submitBtn = document.getElementById('submitBtn');
-            
-            prevBtn.disabled = currentQuestionIndex === 0;
+            const submitButtonContainer = document.getElementById('submitButtonContainer');
             
             if (currentQuestionIndex === questions.length - 1) {
-                nextBtn.style.display = 'none';
-                submitBtn.style.display = 'block';
+                // 最后一题，显示提交按钮
+                submitButtonContainer.style.display = 'flex';
             } else {
-                nextBtn.style.display = 'block';
-                submitBtn.style.display = 'none';
+                // 不是最后一题，隐藏提交按钮
+                submitButtonContainer.style.display = 'none';
             }
         }
 
